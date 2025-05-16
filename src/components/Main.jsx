@@ -10,15 +10,20 @@ export default function Main() {
   useEffect(() => {
     fetch(`https://api.imgflip.com/get_memes`)
       .then((res) => res.json())
-      .then((data) => setAllMemes(data.data.memes[0]))
+      .then((data) => {
+        setAllMemes(data.data.memes);
+      })
       .catch((error) => console.error("Fetch Error", error.message));
   }, []);
-  
-    allMemes ? console.log(allMemes) : null
 
-
-  function handleClick() {
-    setCount((prevCount) => prevCount + 1);
+  function getMemeImage() {
+    if (allMemes && allMemes.length > 0) {
+      const idx = Math.floor(Math.random() * allMemes.length);
+      setMeme((prevMeme) => ({
+        ...prevMeme,
+        imageUrl: allMemes[idx].url,
+      }));
+    }
   }
 
   function handleChange(event) {
@@ -53,14 +58,13 @@ export default function Main() {
             value={meme.bottomText}
           />
         </label>
-        <button>Get a new meme image </button>
+        <button onClick={getMemeImage}>Get a new meme image </button>
       </div>
       <div className="meme">
         <img src={meme.imageUrl} />
         <span className="top">{meme.topText}</span>
         <span className="bottom">{meme.bottomText}</span>
       </div>
-      <button onClick={handleClick}>Get Next Meme</button>
     </main>
   );
 }
